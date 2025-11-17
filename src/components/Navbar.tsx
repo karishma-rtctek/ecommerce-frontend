@@ -1,10 +1,98 @@
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/slices/authSlice";
 
 export default function Navbar() {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state: any) => state.auth);
+
   return (
-    <nav style={{ padding: 20, background: "#eee" }}>
-      <Link to="/" style={{ marginRight: 20 }}>Home</Link>
-      <Link to="/login">Login</Link>
+    <nav style={styles.nav}>
+      <div style={styles.leftSection}>
+        <Link to="/" style={styles.logoText}>ShopNow</Link>
+      </div>
+
+      <div style={styles.rightSection}>
+        <Link to="/" style={styles.link}>Home</Link>
+        <Link to="/cart" style={styles.link}>Cart</Link>
+
+        {user ? (
+          <>
+            <span style={styles.userName}>Hi, {user.name}</span>
+            <button style={styles.logoutBtn} onClick={() => dispatch(logout())}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" style={styles.link}>Login</Link>
+            <Link to="/signup" style={styles.signupBtn}>Signup</Link>
+          </>
+        )}
+      </div>
     </nav>
   );
 }
+
+const styles: any = {
+  nav: {
+    width: "100%",
+    maxWidth: "100vw",
+    padding: "15px 40px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    background: "#4f46e5",
+    color: "white",
+    boxSizing: "border-box",
+    overflow: "hidden",
+  },
+  leftSection: {
+    display: "flex",
+    alignItems: "center",
+    maxWidth: "100%",
+  },
+  rightSection: {
+    display: "flex",
+    gap: "20px",
+    alignItems: "center",
+    flexWrap: "nowrap",
+    maxWidth: "100%",
+  },
+  logoText: {
+    color: "white",
+    fontSize: "22px",
+    fontWeight: "bold",
+    textDecoration: "none",
+  },
+  link: {
+    color: "white",
+    textDecoration: "none",
+    fontSize: "15px",
+    whiteSpace: "nowrap",
+  },
+  signupBtn: {
+    padding: "6px 12px",
+    background: "white",
+    color: "#4f46e5",
+    borderRadius: "6px",
+    textDecoration: "none",
+    fontWeight: 600,
+    whiteSpace: "nowrap",
+  },
+  logoutBtn: {
+    padding: "6px 12px",
+    background: "white",
+    color: "#4f46e5",
+    borderRadius: "6px",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: 600,
+    whiteSpace: "nowrap",
+  },
+  userName: {
+    fontSize: "15px",
+    color: "white",
+    whiteSpace: "nowrap",
+  },
+};

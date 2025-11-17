@@ -1,0 +1,15 @@
+/* Remove horizontal scrolling globally */
+html, body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;   /* removes horizontal scroll */
+  font-family: "Inter", sans-serif;
+}
+
+
+/* Make all containers never exceed screen width */
+* {
+  box-sizing: border-box;
+  max-width: 100%;
+}
