@@ -5,16 +5,23 @@ import { logout } from "../redux/slices/authSlice";
 export default function Navbar() {
   const dispatch = useDispatch();
   const { user } = useSelector((state: any) => state.auth);
+  const cartCount = useSelector((state: any) => state.cart.items.length);
 
   return (
     <nav style={styles.nav}>
       <div style={styles.leftSection}>
-        <Link to="/" style={styles.logoText}>ShopNow</Link>
+        <Link to="/" style={styles.logoText}>
+          ShopNow
+        </Link>
       </div>
 
       <div style={styles.rightSection}>
-        <Link to="/" style={styles.link}>Home</Link>
-        <Link to="/cart" style={styles.link}>Cart</Link>
+        <Link to="/" style={styles.link}>
+          Home
+        </Link>
+        {/* <Link to="/cart" style={styles.link}>Cart</Link> */}
+
+        <Link to="/cart">Cart ({cartCount})</Link>
 
         {user ? (
           <>
@@ -25,8 +32,12 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <Link to="/login" style={styles.link}>Login</Link>
-            <Link to="/signup" style={styles.signupBtn}>Signup</Link>
+            <Link to="/login" style={styles.link}>
+              Login
+            </Link>
+            <Link to="/signup" style={styles.signupBtn}>
+              Signup
+            </Link>
           </>
         )}
       </div>

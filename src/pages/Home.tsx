@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+
+
 export default function HomePage() {
   const products = [
     { id: 4, name: "Classic White T-Shirt", price: 499, description: "Soft cotton T-shirt", image: "👕" },
@@ -95,7 +98,8 @@ export default function HomePage() {
 
           <div className="products-grid">
             {products.map((p) => (
-              <div key={p.id} className="product-card">
+              <Link to={`/product/${p.id}`} className="product-card">
+
                 <div className="product-img">{p.image}</div>
 
                 <h2 className="product-title">{p.name}</h2>
@@ -104,7 +108,7 @@ export default function HomePage() {
                 <p className="product-price">₹{p.price}</p>
 
                 <button className="btn-add">Add to Cart</button>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
