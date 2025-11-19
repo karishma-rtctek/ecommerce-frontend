@@ -224,7 +224,7 @@ export default function AdminProducts() {
           <strong style={{ width: 200, textAlign: "right" }}>Actions</strong>
         </div>
 
-        {products.map((p, idx) => (
+        {products.map((p) => (
           <div key={p.id} style={styles.listRow}>
             <div style={{ width: 60 }}>{renderImage(p.image)}</div>
 

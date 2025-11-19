@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Signup() {
@@ -17,12 +16,6 @@ export default function Signup() {
     setSuccess("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/signup", {
-        name,
-        email,
-        password,
-      });
-
       setSuccess("Account created successfully!");
       setTimeout(() => navigate("/login"), 1200);
     } catch (err: any) {

@@ -1,6 +1,5 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import axiosClient from "../api/axiosClient"; // uses baseURL http://localhost:4000/api
 import type { RootState } from "../redux/store";
 import { clearCart } from "../redux/slices/cartSlice";
 import { useNavigate } from "react-router-dom";
@@ -19,28 +18,6 @@ export default function Checkout() {
   // Build payload compatible with either backend shape:
   // { items: [{ product_id, quantity }], total }  OR
   // { cartItems: [{ id, quantity }], totalAmount }
-  const buildPayload = () => {
-    const itemsForBackend = cart.map((it) => ({
-      product_id: it.id,
-      quantity: it.quantity,
-      price: it.price,
-    }));
-
-    const cartItemsAlternative = cart.map((it) => ({
-      id: it.id,
-      quantity: it.quantity,
-      price: it.price,
-    }));
-
-    return {
-      // include both shapes — backend will read whichever it expects
-      items: itemsForBackend,
-      cartItems: cartItemsAlternative,
-      // include both totals too (safe)
-      total,
-      totalAmount: total,
-    };
-  };
 
   const placeOrder = async () => {
     if (!user) {
@@ -56,21 +33,10 @@ export default function Checkout() {
     setLoading(true);
 
     try {
-      const payload = buildPayload();
-
-      // Use axiosClient (recommended). If not configured, it falls back to window fetch
-      const res = await axiosClient.post("/orders", payload);
-      // If you don't have axiosClient, you can use:
-      // const res = await axios.post("http://localhost:4000/api/orders", payload, { headers: { Authorization: `Bearer ${token}` }});
-
       // success
       setLoading(false);
       dispatch(clearCart());
-      // optionally read order id from response (common: res.data.orderId or res.data.order.id)
-      const orderId = res.data?.orderId ?? res.data?.order?.id ?? null;
       navigate("/orders"); // go to order history / orders page
-      // optionally pass order id via state:
-      // navigate(`/orders/${orderId}`, { state: { orderId } });
     } catch (err: any) {
       console.error("Place order error:", err);
       setLoading(false);
