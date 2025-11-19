@@ -19,9 +19,10 @@ export default function Navbar() {
         <Link to="/" style={styles.link}>
           Home
         </Link>
-        {/* <Link to="/cart" style={styles.link}>Cart</Link> */}
 
-        <Link to="/cart">Cart ({cartCount})</Link>
+        <Link to="/cart" style={{ color: "white", textDecoration: "none" }}>
+          Cart ({cartCount})
+        </Link>
 
         {user ? (
           <>

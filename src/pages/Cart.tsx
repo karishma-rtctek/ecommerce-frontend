@@ -1,11 +1,42 @@
-import { useSelector, useDispatch } from "react-redux";
-import { removeFromCart, increaseQty, decreaseQty } from "../redux/slices/cartSlice";
-import type { RootState } from "../redux/store"; // ✅ type-only import fixed
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+// ⭐ Define the structure of each cart item
+interface CartItem {
+  cartId: number;
+  product_id: number;
+  name: string;
+  image: string;
+  price: number;
+  quantity: number;
+}
 
 export default function Cart() {
-  const cart = useSelector((state: RootState) => state.cart.items);
-  const dispatch = useDispatch();
+  const [cart, setCart] = useState<CartItem[]>([]);
+
+  const loadCart = async () => {
+    const res = await axios.get("http://localhost:5000/api/cart");
+    setCart(res.data);
+  };
+
+  useEffect(() => {
+    loadCart();
+  }, []);
+
+  const updateQty = async (cartId: number, qty: number) => {
+    qty = Math.max(1, qty);
+
+    await axios.put(`http://localhost:5000/api/cart/update/${cartId}`, {
+      quantity: qty,
+    });
+
+    loadCart();
+  };
+
+  const removeItem = async (cartId: number) => {
+    await axios.delete(`http://localhost:5000/api/cart/remove/${cartId}`);
+    loadCart();
+  };
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -13,112 +44,163 @@ export default function Cart() {
     <>
       <style>{`
         .cart-container {
+          width: 90%;
           max-width: 900px;
           margin: 40px auto;
-          background: white;
-          padding: 30px;
-          border-radius: 15px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          background: #ffffff;
+          padding: 25px;
+          border-radius: 20px;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+          font-family: "Inter", sans-serif;
+        }
+
+        .cart-title {
+          font-size: 30px;
+          font-weight: 700;
+          margin-bottom: 25px;
+          color: #111;
+          text-align: center;
         }
 
         .cart-item {
-          display: flex;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 60px 1fr 160px 40px;
           align-items: center;
-          padding: 18px 0;
-          border-bottom: 1px solid #ececec;
-          font-size: 18px;
+          background: #fafafa;
+          padding: 16px;
+          border-radius: 14px;
+          margin-bottom: 15px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
-        .item-left {
+        .cart-img {
+          font-size: 42px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .item-name {
+          font-size: 15px;
+          font-weight: 600;
+          color: #333;
+          max-width: 200px;
+          line-height: 1.3;
+          word-wrap: break-word;
+        }
+
+        .qty-box {
           display: flex;
           align-items: center;
           gap: 10px;
-          font-size: 22px;
+          background: #fff;
+          padding: 8px 12px;
+          border-radius: 10px;
+          box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
         }
 
         .qty-btn {
-          padding: 6px 12px;
-          border: 1px solid black;
-          background: white;
+          width: 30px;
+          height: 30px;
+          border-radius: 8px;
+          background: #111;
+          color: white;
+          border: none;
           cursor: pointer;
-          margin: 0 5px;
-          border-radius: 6px;
-          font-size: 16px;
+          font-size: 18px;
+          font-weight: bold;
+          transition: 0.2s;
         }
 
-        .delete-btn {
-          padding: 6px 10px;
-          border: none;
-          background: red;
-          color: white;
+        .qty-btn:hover {
+          background: #333;
+        }
+
+        .item-total {
+          font-size: 15px;
+          font-weight: 700;
+          margin-left: 10px;
+          color: #111;
+        }
+
+        .remove-btn {
           cursor: pointer;
-          border-radius: 6px;
+          font-size: 20px;
+          font-weight: bold;
+          color: #ff4a4a;
+          transition: 0.2s;
+        }
+
+        .remove-btn:hover {
+          color: #d10000;
+        }
+
+        .total-box {
+          text-align: right;
+          margin-top: 25px;
+          font-size: 22px;
+          font-weight: 700;
+          color: #111;
         }
 
         .checkout-btn {
-          background: black;
+          width: 100%;
+          padding: 14px;
+          background: #111;
           color: white;
           border: none;
-          padding: 14px;
-          width: 100%;
           border-radius: 12px;
-          margin-top: 25px;
-          cursor: pointer;
           font-size: 18px;
+          cursor: pointer;
+          margin-top: 20px;
+          transition: 0.25s;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        .total-text {
-          text-align: right;
-          margin-top: 20px;
-          font-size: 24px;
-          font-weight: bold;
+        .checkout-btn:hover {
+          background: #333;
         }
       `}</style>
 
       <div className="cart-container">
-        <h2>Your Cart</h2>
+        <h2 className="cart-title">🛒 Your Cart</h2>
 
-        {cart.length === 0 ? (
-          <p>Your cart is empty.</p>
-        ) : (
-          cart.map((item) => (
-            <div key={item.id} className="cart-item">
-              {/* LEFT SIDE */}
-              <div className="item-left">
-                <span>{item.image}</span>
-                <span>{item.name}</span>
-              </div>
+        {cart.map((item) => (
+          <div className="cart-item" key={item.cartId}>
+            <div className="cart-img">{item.image}</div>
 
-              {/* QUANTITY */}
-              <div>
-                <button className="qty-btn" onClick={() => dispatch(decreaseQty(item.id))}>-</button>
-                {item.quantity}
-                <button className="qty-btn" onClick={() => dispatch(increaseQty(item.id))}>+</button>
-              </div>
+            <div className="item-name">{item.name}</div>
 
-              {/* PRICE */}
-              <strong>₹{item.price * item.quantity}</strong>
-
-              {/* DELETE BUTTON */}
-              <button 
-                className="delete-btn"
-                onClick={() => dispatch(removeFromCart(item.id))}
+            <div className="qty-box">
+              <button
+                className="qty-btn"
+                onClick={() => updateQty(item.cartId, item.quantity - 1)}
               >
-                X
+                -
               </button>
+
+              <span>{item.quantity}</span>
+
+              <button
+                className="qty-btn"
+                onClick={() => updateQty(item.cartId, item.quantity + 1)}
+              >
+                +
+              </button>
+
+              <span className="item-total">₹{item.price * item.quantity}</span>
             </div>
-          ))
-        )}
+
+            <div className="remove-btn" onClick={() => removeItem(item.cartId)}>
+              ✕
+            </div>
+          </div>
+        ))}
+
+        <div className="total-box">Total: ₹{total}</div>
 
         {cart.length > 0 && (
-          <>
-            <h3 className="total-text">Total: ₹{total}</h3>
-
-            <Link to="/checkout">
-              <button className="checkout-btn">Proceed to Checkout</button>
-            </Link>
-          </>
+          <button className="checkout-btn">Proceed to Checkout</button>
         )}
       </div>
     </>

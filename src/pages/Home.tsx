@@ -180,7 +180,21 @@ export default function HomePage() {
                 {/* Add to cart button */}
                 <button
                   className="cart-btn"
-                  onClick={() => dispatch(addToCart(p))}
+                  onClick={async () => {
+                    try {
+                      // 1️⃣ Call backend API
+                      await axios.post("http://localhost:5000/api/cart/add", {
+                        productId: p.id,
+                        quantity: 1,
+                      });
+
+                      // 2️⃣ Update Redux only after backend confirms
+                      dispatch(addToCart(p));
+                    } catch (error) {
+                      console.error("Failed to add to cart:", error);
+                      alert("Something went wrong, try again!");
+                    }
+                  }}
                 >
                   Add to Cart
                 </button>
