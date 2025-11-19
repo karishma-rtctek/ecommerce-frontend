@@ -23,7 +23,6 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action: PayloadAction<CartItem>) => {
       const existing = state.items.find((item) => item.id === action.payload.id);
-
       if (existing) {
         existing.quantity += 1;
       } else {
@@ -48,10 +47,18 @@ const cartSlice = createSlice({
     clearCart: (state) => {
       state.items = [];
     },
+
+    // ✅ New action to populate cart from backend
+    setCart: (state, action: PayloadAction<CartItem[]>) => {
+      state.items = action.payload;
+    },
   },
 });
 
-export const { addToCart, removeFromCart, increaseQty, decreaseQty, clearCart } =
+export const { addToCart, removeFromCart, increaseQty, decreaseQty, clearCart, setCart } =
   cartSlice.actions;
 
 export default cartSlice.reducer;
+
+
+

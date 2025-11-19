@@ -1,11 +1,27 @@
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
+import axiosClient from "../api/axiosClient";
+import { setCart } from "../redux/slices/cartSlice";
+import { useEffect } from "react";
 
 export default function Navbar() {
   const dispatch = useDispatch();
   const { user } = useSelector((state: any) => state.auth);
   const cartCount = useSelector((state: any) => state.cart.items.length);
+
+  useEffect(() => {
+    const loadCart = async () => {
+      try {
+        const res = await axiosClient.get("/cart"); // fetch from backend
+        dispatch(setCart(res.data)); // update Redux
+      } catch (err) {
+        console.error("Failed to fetch cart", err);
+      }
+    };
+
+    loadCart();
+  }, [dispatch]);
 
   return (
     <nav style={styles.nav}>
