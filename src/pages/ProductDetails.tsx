@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
 
@@ -6,19 +7,35 @@ export default function ProductDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  const products = [
-    { id: 4, name: "Classic White T-Shirt", price: 499, description: "Soft cotton T-shirt", image: "👕" },
-    { id: 5, name: "Plant", price: 1299, description: "Indoor decorative plant", image: "🪴" },
-    { id: 6, name: "Sneakers", price: 2499, description: "Comfortable running sneakers", image: "👟" },
-    { id: 7, name: "Leather Wallet", price: 799, description: "Stylish and durable wallet", image: "👛" },
-    { id: 8, name: "Smart Watch", price: 2999, description: "Track fitness and time easily", image: "⌚" },
-    { id: 9, name: "Casual Jacket", price: 1999, description: "Perfect for cool evenings", image: "🧥" }
-  ];
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const product = products.find((p) => String(p.id) === id);
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const res = await fetch(`http://localhost:5000/api/products/${id}`);
+        const data = await res.json();
+        setProduct(data);
+      } catch (err) {
+        console.log(err);
+      }
+      setLoading(false);
+    }
 
-  if (!product)
-    return <h2 style={{ textAlign: "center", marginTop: "50px" }}>Product Not Found</h2>;
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return <h2 style={{ textAlign: "center", marginTop: "50px" }}>Loading...</h2>;
+  }
+
+  if (!product) {
+    return (
+      <h2 style={{ textAlign: "center", marginTop: "50px" }}>
+        Product Not Found
+      </h2>
+    );
+  }
 
   return (
     <>
@@ -107,14 +124,13 @@ export default function ProductDetails() {
                     id: product.id,
                     name: product.name,
                     price: product.price,
-                    quantity: 1
+                    quantity: 1,
                   })
                 )
               }
             >
               Add to Cart
             </button>
-
           </div>
         </div>
       </div>
