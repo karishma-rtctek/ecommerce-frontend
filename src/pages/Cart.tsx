@@ -4,7 +4,7 @@ import axiosClient from "../api/axiosClient";
 // ⭐ Define the structure of each cart item
 interface CartItem {
   cartId: number;
-  product_id: number;
+  productId: number; // match backend
   name: string;
   image: string;
   price: number;
@@ -15,8 +15,23 @@ export default function Cart() {
   const [cart, setCart] = useState<CartItem[]>([]);
 
   const loadCart = async () => {
+    // Fetch cart data from the backend API
     const res = await axiosClient.get("/cart");
-    setCart(res.data);
+
+    // Process the response data:
+    // 1. Ensure numeric values for price and quantity (sometimes API may return strings)
+    // 2. Sort the cart items by cartId to maintain a consistent order in the UI
+    const sortedCart = res.data
+      .map((item: any) => ({
+        ...item,
+        price: Number(item.price), // Convert price to number
+        quantity: Number(item.quantity), // Convert quantity to number
+      }))
+      .sort((a: any, b: any) => a.cartId - b.cartId); // Sort by cartId ascending
+
+    // Update the state with the sorted cart items
+    // This ensures items don't change positions unexpectedly in the UI
+    setCart(sortedCart);
   };
 
   useEffect(() => {
