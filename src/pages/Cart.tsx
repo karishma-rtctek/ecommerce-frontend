@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 
 // ⭐ Define the structure of each cart item
 interface CartItem {
@@ -15,7 +15,7 @@ export default function Cart() {
   const [cart, setCart] = useState<CartItem[]>([]);
 
   const loadCart = async () => {
-    const res = await axios.get("http://localhost:5000/api/cart");
+    const res = await axiosClient.get("/cart");
     setCart(res.data);
   };
 
@@ -26,7 +26,7 @@ export default function Cart() {
   const updateQty = async (cartId: number, qty: number) => {
     qty = Math.max(1, qty);
 
-    await axios.put(`http://localhost:5000/api/cart/update/${cartId}`, {
+    await axiosClient.put(`/cart/update/${cartId}`, {
       quantity: qty,
     });
 
@@ -34,7 +34,7 @@ export default function Cart() {
   };
 
   const removeItem = async (cartId: number) => {
-    await axios.delete(`http://localhost:5000/api/cart/remove/${cartId}`);
+    await axiosClient.delete(`/cart/remove/${cartId}`);
     loadCart();
   };
 

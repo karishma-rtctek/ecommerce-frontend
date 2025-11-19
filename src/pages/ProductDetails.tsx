@@ -1,25 +1,35 @@
+// src/pages/ProductDetails.tsx
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
+import axiosClient from "../api/axiosClient";
+
+type Product = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image: string; // emoji or URL
+};
 
 export default function ProductDetails() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
 
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const res = await fetch(`http://localhost:5000/api/products/${id}`);
-        const data = await res.json();
-        setProduct(data);
+        const res = await axiosClient.get<Product>(`/products/${id}`);
+        setProduct(res.data);
       } catch (err) {
-        console.log(err);
+        console.error("Failed to fetch product:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
 
     fetchProduct();

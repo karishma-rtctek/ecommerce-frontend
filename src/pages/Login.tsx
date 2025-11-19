@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/slices/authSlice";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import axiosClient from "../api/axiosClient";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -15,15 +15,16 @@ export default function Login() {
   const handleLogin = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axiosClient.post("/auth/login", {
         email,
         password,
       });
 
       dispatch(loginSuccess(res.data));
-      navigate("/"); 
+      navigate("/");
     } catch (err: any) {
-      setError("Invalid email or password");
+      console.log(err.response?.data);
+      setError(err.response?.data?.message || "Invalid email or password");
     }
   };
 

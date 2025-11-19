@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 
 interface OrderItem {
   id: number;
@@ -29,7 +29,7 @@ export default function Orders() {
 
   async function fetchOrders() {
     try {
-      const res = await axios.get("http://localhost:5000/api/orders");
+      const res = await axiosClient.get("/orders");
       setOrders(res.data.orders);
     } catch (err) {
       console.log("❌ Error fetching orders", err);

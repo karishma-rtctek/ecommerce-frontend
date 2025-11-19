@@ -1,6 +1,6 @@
 // src/pages/AdminProducts.tsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 
 type Product = {
   id: number;
@@ -34,7 +34,7 @@ export default function AdminProducts() {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get(`http://localhost:5000/api/products?page=${p}`);
+      const res = await axiosClient.get(`/products?page=${p}`);
       // If backend returns { products, pagination } use that
       if (res.data.products && res.data.pagination) {
         setProducts(res.data.products);
@@ -73,7 +73,7 @@ export default function AdminProducts() {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/products", {
+      await axiosClient.post("/products", {
         name,
         price: Number(price),
         description,
@@ -100,7 +100,7 @@ export default function AdminProducts() {
     if (!ok) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`);
+      await axiosClient.delete(`/products/${id}`);
       // refresh list: if last item on page removed you may want to go to previous page
       fetchProducts(page);
     } catch (err: any) {
@@ -126,7 +126,7 @@ export default function AdminProducts() {
     if (!editProduct) return;
     setEditLoading(true);
     try {
-      await axios.put(`http://localhost:5000/api/products/${editProduct.id}`, {
+      await axiosClient.put(`/products/${editProduct.id}`, {
         name: editProduct.name,
         price: Number(editProduct.price),
         description: editProduct.description,

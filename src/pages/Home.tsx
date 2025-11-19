@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
 
@@ -18,8 +18,8 @@ export default function HomePage() {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        `http://localhost:5000/api/products?page=${page}`
+      const res = await axiosClient.get(
+        `/products?page=${page}`
       );
 
       setProducts(res.data.products);
@@ -183,7 +183,7 @@ export default function HomePage() {
                   onClick={async () => {
                     try {
                       // 1️⃣ Call backend API
-                      await axios.post("http://localhost:5000/api/cart/add", {
+                      await axiosClient.post("/cart/add", {
                         productId: p.id,
                         quantity: 1,
                       });

@@ -20,8 +20,13 @@ export default function Navbar() {
           Home
         </Link>
 
-        <Link to="/cart" style={{ color: "white", textDecoration: "none" }}>
+        <Link to="/cart" style={styles.link}>
           Cart ({cartCount})
+        </Link>
+
+        {/* Admin button visible for all users */}
+        <Link to="/admin/products" style={styles.adminBtn}>
+          Admin
         </Link>
 
         {user ? (
@@ -105,6 +110,15 @@ const styles: any = {
   userName: {
     fontSize: "15px",
     color: "white",
+    whiteSpace: "nowrap",
+  },
+  adminBtn: {
+    padding: "6px 12px",
+    background: "#facc15", // yellow color
+    color: "#111",
+    borderRadius: "6px",
+    fontWeight: 600,
+    textDecoration: "none",
     whiteSpace: "nowrap",
   },
 };
