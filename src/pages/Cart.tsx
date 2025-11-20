@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../api/axiosClient";
-import { Navigate, useNavigate } from "react-router-dom";
-import Checkout from "./Checkout";
+import { useNavigate } from "react-router-dom";
 
 // ⭐ Define the structure of each cart item
 interface CartItem {
