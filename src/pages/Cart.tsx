@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../api/axiosClient";
+import { Navigate, useNavigate } from "react-router-dom";
+import Checkout from "./Checkout";
 
 // ⭐ Define the structure of each cart item
 interface CartItem {
@@ -13,6 +15,7 @@ interface CartItem {
 
 export default function Cart() {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const navigate = useNavigate();
 
   const loadCart = async () => {
     // Fetch cart data from the backend API
@@ -215,7 +218,12 @@ export default function Cart() {
         <div className="total-box">Total: ₹{total}</div>
 
         {cart.length > 0 && (
-          <button className="checkout-btn">Proceed to Checkout</button>
+          <button
+            className="checkout-btn"
+            onClick={() => navigate("/checkout")}
+          >
+            Proceed to Checkout
+          </button>
         )}
       </div>
     </>

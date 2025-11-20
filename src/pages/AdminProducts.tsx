@@ -436,7 +436,7 @@ const styles: { [k: string]: React.CSSProperties } = {
   productName: { fontWeight: 700 },
   productDesc: { color: "#666", fontSize: 13 },
 
-  pagination: { display: "flex", justifyContent: "center", padding: 12, gap: 8 },
+  pagination: { display: "flex", justifyContent: "center", padding: 12, gap: 8, alignItems: "center" },
   pageBtn: {
     padding: "6px 10px",
     borderRadius: 8,
